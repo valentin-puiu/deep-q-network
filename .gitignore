@@ -48,3 +48,27 @@ Thumbs.db
 *.mov
 *.wmv
 
+
+GIF/
+
+other/
+
+results/atlantis/
+
+results/breakout-classic/
+
+results/breakout-gelu/
+
+results/breakout-leaky/
+
+results/breakout-simple-relu/
+
+results/breakout/
+
+results/enduro/
+
+results/montezuma/
+
+results/pong/
+
+results/river-raid/

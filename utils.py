@@ -1,5 +1,6 @@
 from skimage.transform import resize
 import imageio
+import numpy as np
 
 def learn(session, replay_memory, main_dqn, target_dqn, batch_size, gamma):
     """

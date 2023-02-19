@@ -1,4 +1,4 @@
-TRAIN = True
+TRAIN = False
 
 #ENV_NAME = 'RiverraidDeterministic-v4'
 #ENV_NAME = 'AtlantisDeterministic-v4'
@@ -14,7 +14,7 @@ import numpy as np
 import pickle
 
 from Atari import Atari
-from DqnOrig import DQN
+from DqnSimple import DQN
 from ReplayMemory import ReplayMemory
 from ExplorationExploatation import ExplorationExploitationScheduler
 from TargetNetworkUpdater import TargetNetworkUpdater
@@ -100,20 +100,20 @@ def train():
 
     with tf.Session() as sess:
         sess.run(init)
-        saver.restore(sess, "output/my_model-20269532") # activeaza daca reiei un model
-        update_networks(sess) # activeaza daca reiei un model
+        # saver.restore(sess, "output/my_model-20269532") # activeaza daca reiei un model
+        # update_networks(sess) # activeaza daca reiei un model
          
-        frame_number = 20269532 # daca reiei un model, pui numarul pasului, altfel 0
+        frame_number = 0 # daca reiei un model, pui numarul pasului, altfel 0
         rewards = []
         loss_list = []
 
-        infile = open('replay_mem', 'rb') # comentezi daca nu incarci model
-        my_replay_memory = pickle.load(infile) # comentezi daca nu incarci model
-        infile.close() # comentezi daca nu incarci model
+        # infile = open('replay_mem', 'rb') # comentezi daca nu incarci model
+        # my_replay_memory = pickle.load(infile) # comentezi daca nu incarci model
+        # infile.close() # comentezi daca nu incarci model
 
-        infile = open('loss', 'rb') # comentezi daca nu incarci model
-        loss_list = pickle.load(infile) # comentezi daca nu incarci model
-        infile.close() # comentezi daca nu incarci model
+        # infile = open('loss', 'rb') # comentezi daca nu incarci model
+        # loss_list = pickle.load(infile) # comentezi daca nu incarci model
+        # infile.close() # comentezi daca nu incarci model
 
         
         while frame_number < MAX_FRAMES:
@@ -226,7 +226,7 @@ if TRAIN:
 
 
 save_files_dict = {
-    'BreakoutDeterministic-v4':("trained/breakout/", "my_model-15845555.meta"),
+    'BreakoutDeterministic-v4':("results/breakout-simple-relu/", "my_model-20048264.meta", "my_model-20048264"),
     'PongDeterministic-v4':("trained/pong/", "my_model-3217770.meta")
 }
 
@@ -235,13 +235,13 @@ if not TRAIN:
     gif_path = "GIF/"
     os.makedirs(gif_path, exist_ok=True)
 
-    trained_path, save_file = save_files_dict[ENV_NAME]
+    trained_path, save_file, chkpt = save_files_dict[ENV_NAME]
 
     explore_exploit_sched = ExplorationExploitationScheduler(MAIN_DQN, atari.env.action_space.n, replay_memory_start_size=REPLAY_MEMORY_START_SIZE, max_frames=MAX_FRAMES)
     
     with tf.Session() as sess:
         saver = tf.train.import_meta_graph(trained_path+save_file)
-        saver.restore(sess,tf.train.latest_checkpoint(trained_path))
+        saver.restore(sess,trained_path + chkpt)
         frames_for_gif = []
         done_life_lost = atari.reset(sess, evaluation = True)
         episode_reward_sum = 0

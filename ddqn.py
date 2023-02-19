@@ -5,8 +5,8 @@ TRAIN = False
 #ENV_NAME = 'SpaceInvaders-v4'
 #ENV_NAME = 'BreakoutDeterministic-v4'
 #ENV_NAME = 'PongDeterministic-v4'  
-#ENV_NAME = 'Enduro-v4'
-ENV_NAME = 'MontezumaRevenge-v4'
+ENV_NAME = 'Enduro-v4'
+#ENV_NAME = 'MontezumaRevenge-v4'
 
 
 from math import sqrt
@@ -103,20 +103,20 @@ def train():
 
     with tf.Session() as sess:
         sess.run(init)
-        saver.restore(sess, "output/my_model-12928333") # aici
-        update_networks(sess) # aici
+#        saver.restore(sess, "output/my_model-12928333") # aici
+#        update_networks(sess) # aici
          
-        frame_number = 12928333 # 0
+        frame_number = 0 # 0
         rewards = []
         loss_list = []
 
-        infile = open('replay_mem', 'rb')
-        my_replay_memory = pickle.load(infile)
-        infile.close()
+        # infile = open('replay_mem', 'rb')
+        # my_replay_memory = pickle.load(infile)
+        # infile.close()
 
-        infile = open('loss', 'rb')
-        loss_list = pickle.load(infile)
-        infile.close()
+        # infile = open('loss', 'rb')
+        # loss_list = pickle.load(infile)
+        # infile.close()
 
         
         while frame_number < MAX_FRAMES:
@@ -231,7 +231,8 @@ if TRAIN:
 
 
 save_files_dict = {
-    'MontezumaRevenge-v4':("output/", "my_model-12325236.meta")
+    'MontezumaRevenge-v4':("results/montezuma/", "my_model-12325236.meta", "my_model-12325236"),
+    'Enduro-v4':("results/enduro/", "my_model-14900297.meta", "my_model-14900297")
 }
 
 if not TRAIN:
@@ -239,7 +240,7 @@ if not TRAIN:
     gif_path = "GIF/"
     os.makedirs(gif_path, exist_ok=True)
 
-    trained_path, save_file = save_files_dict[ENV_NAME]
+    trained_path, save_file, chkpt = save_files_dict[ENV_NAME]
 
     explore_exploit_sched = ExplorationExploitationScheduler(
         MAIN_DQN, atari.env.action_space.n, 
@@ -248,7 +249,7 @@ if not TRAIN:
     
     with tf.Session() as sess:
         saver = tf.train.import_meta_graph(trained_path+save_file)
-        saver.restore(sess,tf.train.latest_checkpoint(trained_path))
+        saver.restore(sess,trained_path+chkpt)
         frames_for_gif = []
         done_life_lost = atari.reset(sess, evaluation = True)
         episode_reward_sum = 0
